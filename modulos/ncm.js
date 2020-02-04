@@ -17,16 +17,26 @@ var knex = require('knex')({
   }
 });
 
-function verifyData(req, res ,next){
-	
+function verifyData(req, res ,next){s
+
+
 }
 
 router.get('/', verifyJWT, (req,res)=>{
 	knex
 	.select()
 	.from('ncm')
+	.limit(1000)
 	.then(con=>{
-    res.status(200).send({ auth: true, result: true, dados: con })
+		const dataAtual = new Date()
+		con.map(e => {
+			if(e.data < dataAtual){
+				e.ativo = "S"
+			}
+		})
+		res.status(200).send({ auth: true, result: true, dados: con })
+		console.log(con)
+    // res.status(200).send({ auth: true, result: true, dados: con })
   })
   .catch(err=>{
     res.status(500).send({ auth: true, result: false, erro: err.message })  
